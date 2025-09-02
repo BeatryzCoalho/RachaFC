@@ -1,0 +1,26 @@
+# Ambiente virtual
+venv/
+ENV/
+env/
+
+# Cache do Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Arquivos de banco local
+*.sqlite3
+*.db
+
+# Configurações locais / variáveis
+.env
+*.env
+
+# VSCode
+.vscode/
+*.code-workspace
+
+# MacOS / Linux
+.DS_Store
+.idea/
