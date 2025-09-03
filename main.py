@@ -6,8 +6,8 @@ from beanie import init_beanie
 from dotenv import load_dotenv
 
 from app.models import( Posicao, Jogador, Temporada, Partida, Regra, Evento)
-from app.seed_regras import ensure_system_rules
-from app.seed_posicoes import ensure_system_position
+from app.seeds.seed_regras import ensure_system_rules
+from app.seeds.seed_posicoes import ensure_system_position
 load_dotenv()
 MONGO_URL = os.getenv("MONGO_URL", "")
 
