@@ -16,52 +16,52 @@ class PartidaOut(BaseModel):
     data:str
 
 
-def _to_out_(p: Partida) -> PartidaOut:
+def serialize_partida(partida: Partida) -> PartidaOut:
     return PartidaOut(
-        id=str(p.id),
-        temporada_id=str(p.temporada.id)
-        data=str(p.data)
+        id=str(partida.id),
+        temporada_id=str(partida.temporada.id)
+        data=str(partida.data)
     )
 
 ## esse @router é um decorador de rota, ele diz qual operação minha função abaixo representará
 @route.get("/", response_model=List[PartidaOut])
 async def listar_partidas():
-    docs = await Partida.find_all(fecth_links=True).to_list()
-    return [_to_out(p) for p in docs]
+    partidas = await Partida.find_all(fecth_links=True).to_list()
+    return [serialize_partida(partida) for partida in partidas]
 
 @route.post("/", response_model=PartidaOut)
 async def criar_partida(payload: PartidaIn):
-    temp =  await Temporada.get(PydanticObjectId(payload.temporada_id))
-    if not temp:
+    temporada =  await Temporada.get(PydanticObjectId(payload.temporada_id))
+    if not temporada:
         raise HTTPException(404, "Temporada não encontrada")
-    p = Partida(
-        temporada=temp,
+    partida = Partida(
+        temporada=temporada,
         data=payload.data
     )
-    await p.insert()
-    p = await Partida.get(p.id, fecth_links=True)
-    return _to_out(p)
+    await partida.insert()
+    partida = await Partida.get(partida.id, fecth_links=True)
+    return serialize_partida(partida)
 
 @router.put("/{partida_id}", response_model=PartidaOut)
 async def atualizar_partida(partida_id: str, payload:PartidaIn):
-    p = await Partida.get(PydanticObjectId(partida_id))
-    if not p:
+    partida = await Partida.get(PydanticObjectId(partida_id))
+    if not partida:
         raise HTTPException(404, "Partida não encontrada")
-    temp = await Temporada.get(PydanticObjectId(payload.temporada_id))
-    if not temp:
+    temporada = await Temporada.get(PydanticObjectId(payload.temporada_id))
+    if not temporada:
         raise HTTPException(404, "Temporada não encontrada")
 
-    p.temporada = temp
-    p.data = payload.data
+    partida.temporada = temporada
+    partida.data = payload.data
 
-    await p.save()
-    p = await Partida.get(p.id, fecth_links=True)
-    return _to_out(p)
+    await partida.save()
+    partida = await Partida.get(partida.id, fecth_links=True)
+    return serialize_partida(partida)
 
 @router.delete("/{partida_id}")
 async def deletar(partida_id: str):
-    p = await Partida.get(PydanticObjectId(partida_id))
-    if not p:
+    partida = await Partida.get(PydanticObjectId(partida_id))
+    if not partida:
         raise HTTPException(404, "Partida não encontrada")
-    await p.delete()
+    await partida.delete()
     return {"ok": True}
