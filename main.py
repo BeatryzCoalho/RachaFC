@@ -8,6 +8,8 @@ from dotenv import load_dotenv
 from app.models import( Posicao, Jogador, Temporada, Partida, Regra, Evento)
 from app.seeds.seed_regras import ensure_system_rules
 from app.seeds.seed_posicoes import ensure_system_position
+from app.routers.router_jogadores import router as rota_jogadores
+from app.routers.router_partida import router as rota_partida
 load_dotenv()
 MONGO_URL = os.getenv("MONGO_URL", "")
 
@@ -40,6 +42,10 @@ async def on_startup():
 
     await ensure_system_rules()
     await ensure_system_position()
+
+
+app.include_router(rota_jogadores, prefix="/jogadores", tags=["jogadores"])
+app.include_router(rota_partida, prefix="/partida", tags=["partida"])
 
 @app.get("/health")
 async def health():
