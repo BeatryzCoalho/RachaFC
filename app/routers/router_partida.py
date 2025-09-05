@@ -19,17 +19,17 @@ class PartidaOut(BaseModel):
 def serialize_partida(partida: Partida) -> PartidaOut:
     return PartidaOut(
         id=str(partida.id),
-        temporada_id=str(partida.temporada.id)
+        temporada_id=str(partida.temporada.id),
         data=str(partida.data)
     )
 
 ## esse @router é um decorador de rota, ele diz qual operação minha função abaixo representará
-@route.get("/", response_model=List[PartidaOut])
+@router.get("/", response_model=List[PartidaOut])
 async def listar_partidas():
     partidas = await Partida.find_all(fecth_links=True).to_list()
     return [serialize_partida(partida) for partida in partidas]
 
-@route.post("/", response_model=PartidaOut)
+@router.post("/", response_model=PartidaOut)
 async def criar_partida(payload: PartidaIn):
     temporada =  await Temporada.get(PydanticObjectId(payload.temporada_id))
     if not temporada:
