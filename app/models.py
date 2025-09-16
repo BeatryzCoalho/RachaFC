@@ -2,6 +2,22 @@ from beanie import Document, Link, Indexed, before_event
 from typing import Optional, Literal
 from datetime import date, datetime
 from pydantic import Field
+from fastapi_users.models import BaseUser, BaseUserCreate, BaseUserUpdate
+
+
+##USER (login/autentificação)
+class User(Document, BaseUser):
+    is_admin: bool = False
+    class Settings:
+        name = "users"
+
+class UserCreate(BaseUserCreate):
+    is_admin: Optional[bool] = False
+
+
+class UserUpdate(BaseUserUpdate):
+    is_admin:Optional[bool] = None
+
 
 ##TABELA DE POSICOES
 class Posicao(Document):
@@ -20,7 +36,9 @@ class Jogador(Document):
     nome: str
     apelido: Optional[str] = None
     posicao: Optional[Link[Posicao]] = None
+    foto_url: Optional[str] = None
     ativo: bool = True
+    user: Optional[Link[User]] = None
     class Settings: name = 'jogadores'
 
 
@@ -64,4 +82,7 @@ class Evento(Document):
     tipo: RegrasType
     criado_em: datetime = Field(default_factory=datetime.utcnow)
     class Settings: name ='eventos'
+
+
+
 

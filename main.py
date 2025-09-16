@@ -10,6 +10,7 @@ from app.seeds.seed_regras import ensure_system_rules
 from app.seeds.seed_posicoes import ensure_system_position
 from app.routers.router_jogadores import router as rota_jogadores
 from app.routers.router_partida import router as rota_partida
+from app.auth import auth_router, register_router, users_router
 load_dotenv()
 MONGO_URL = os.getenv("MONGO_URL", "")
 
@@ -36,14 +37,16 @@ async def on_startup():
 
     await init_beanie(
         database=db,
-        document_models=[Posicao, Jogador, Temporada, Partida, Regra, Evento],
+        document_models=[User, Posicao, Jogador, Temporada, Partida, Regra, Evento],
     )
 
 
     await ensure_system_rules()
     await ensure_system_position()
 
-
+app.include_router(auth_router, prefix="/auth", tags=["auth"])
+app.include_router(register_router, prefix="/auth", tags=["auth"])
+app.include_router(users_router, prefix="/auth", tags=["auth"])
 app.include_router(rota_jogadores, prefix="/jogadores", tags=["jogadores"])
 app.include_router(rota_partida, prefix="/partida", tags=["partida"])
 
