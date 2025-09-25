@@ -4,12 +4,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 from beanie import init_beanie
 from dotenv import load_dotenv
-
-from app.models import( Posicao, Jogador, Temporada, Partida, Regra, Evento)
+from app.models import( Posicao, Jogador, Temporada, Partida, Regra, Evento, User)
 from app.seeds.seed_regras import ensure_system_rules
 from app.seeds.seed_posicoes import ensure_system_position
 from app.routers.router_jogadores import router as rota_jogadores
 from app.routers.router_partida import router as rota_partida
+from app.routers.router_temporada import router as rota_temporada
 from app.auth import auth_router, register_router, users_router
 load_dotenv()
 MONGO_URL = os.getenv("MONGO_URL", "")
@@ -49,6 +49,7 @@ app.include_router(register_router, prefix="/auth", tags=["auth"])
 app.include_router(users_router, prefix="/auth", tags=["auth"])
 app.include_router(rota_jogadores, prefix="/jogadores", tags=["jogadores"])
 app.include_router(rota_partida, prefix="/partida", tags=["partida"])
+app.include_router(rota_temporada, prefix="/temporada", tags=["temporada"])
 
 @app.get("/health")
 async def health():

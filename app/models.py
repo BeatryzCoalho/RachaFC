@@ -2,21 +2,23 @@ from beanie import Document, Link, Indexed, before_event
 from typing import Optional, Literal
 from datetime import date, datetime
 from pydantic import Field
-from fastapi_users.models import BaseUser, BaseUserCreate, BaseUserUpdate
+from fastapi_users_db_beanie import BeanieBaseUser
+from fastapi_users import schemas
 
 
 ##USER (login/autentificação)
-class User(Document, BaseUser):
+class User(BeanieBaseUser, Document):
     is_admin: bool = False
-    class Settings:
+
+    class Settings(BeanieBaseUser.Settings):
         name = "users"
 
-class UserCreate(BaseUserCreate):
+# Esquemas para criação/atualização
+class UserCreate(schemas.BaseUserCreate):
     is_admin: Optional[bool] = False
 
-
-class UserUpdate(BaseUserUpdate):
-    is_admin:Optional[bool] = None
+class UserUpdate(schemas.BaseUserUpdate):
+    is_admin: Optional[bool] = None
 
 
 ##TABELA DE POSICOES
@@ -52,7 +54,9 @@ class Temporada(Document):
 ##TABELA DE PARTIDAS
 class Partida(Document):
     temporada: Link[Temporada]
-    data: date
+    semana_inicio: date
+    semana_fim: date
+    numero: int
     class Settings:
         name = "partidas"
 

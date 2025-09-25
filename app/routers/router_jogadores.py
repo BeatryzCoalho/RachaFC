@@ -1,9 +1,9 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException,Depends
 from typing import List, Optional
 from pydantic import BaseModel, Field
 from beanie import PydanticObjectId
 from app.models import Jogador, Posicao
-
+from app.auth import current_staff, current_user
 router = APIRouter()
 
 
@@ -115,11 +115,11 @@ async def atualizar_jogador_admin(jogador_id:str, payload: JogadorIn, user=Depen
     posicao = await serializer_get_posicao(payload.posicao_id)
     if payload.foto_url is not None:
         jogador.foto_url = payload.foto_url
-     if payload.apelido is not None:
+    if payload.apelido is not None:
         jogador.apelido = payload.apelido
-     if payload.posicao is not None:
+    if payload.posicao is not None:
         jogador.posicao_id = posicao
-     if payload.ativo is not None:
+    if payload.ativo is not None:
         jogador.ativo = payload.ativo
 
     await jogador.save()
