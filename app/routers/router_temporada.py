@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException
 from typing import List
 from pydantic import BaseModel
 from beanie import PydanticObjectId
-from app.models import Temporada
+from app.models import Temporada, Partida
 from datetime import timedelta, date
 from fastapi import Depends
 from app.auth import current_staff
@@ -20,27 +20,28 @@ class TemporadaOut(BaseModel):
     fim: str
 
 async def gerar_partidas(temporada: Temporada):
+    
     inicio = temporada.inicio
     fim = temporada.fim
 
     numero = 1 
     data_atual = inicio
-
+ 
     while data_atual <= fim:
         semana_inicio = data_atual
         semana_fim = min(data_atual + timedelta(days=6), fim)
-
-    partida = Partida(
-        temporada=temporada,
-        numero=numero,
-        semana_inicio=semana_inicio,
-        semana_fim=semana_fim,
-    )
-
-    await partida.insert()
-    print(f"Patida criada para {inicio}")
-    numero += 1
-    data_atual += timedelta(weeks=1)
+       
+        partida = Partida(
+            temporada=temporada,
+            numero=numero,
+            semana_inicio=semana_inicio,
+            semana_fim=semana_fim,
+        )
+        
+        await partida.insert()
+        print(f"Patida criada para {inicio}")
+        numero += 1
+        data_atual += timedelta(weeks=1)
 
 def serializer_temporada(temporada: Temporada) -> TemporadaOut:
     return TemporadaOut(
@@ -62,7 +63,9 @@ async def criar_temporada(payload:TemporadaIn, user=Depends(current_staff)):
 
     temporada = Temporada(nome=payload.nome, inicio=payload.inicio, fim=payload.fim)
     await temporada.insert()
+    print(f"temporada salva")
     await gerar_partidas(temporada)
+    print("partidas geradas")
     return serializer_temporada(temporada)
 
 
