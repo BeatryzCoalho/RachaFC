@@ -62,7 +62,7 @@ class Partida(Document):
 
     
 
-RegrasType  = Literal["GOL", "AMARELO", "VERMELHO", "ASSISTENCIA", "ATRASO", "ATRASO_PAGAMENTO", "PAGAMENTO_DIA", "CAMPEAO_SEMANA", "PERDEDOR_SEMANA"]
+
 
 ##TABELA DE REGRAS
 class Regra(Document):
@@ -83,7 +83,7 @@ class Regra(Document):
 class Evento(Document):
     partida: Link[Partida]
     jogador: Link[Jogador]
-    tipo: RegrasType
+    tipo: Link[Regra]
     criado_em: datetime = Field(default_factory=datetime.utcnow)
     class Settings: name ='eventos'
 

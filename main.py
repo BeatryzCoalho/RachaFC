@@ -10,6 +10,7 @@ from app.seeds.seed_posicoes import ensure_system_position
 from app.routers.router_jogadores import router as rota_jogadores
 from app.routers.router_partida import router as rota_partida
 from app.routers.router_temporada import router as rota_temporada
+from app.routers.router_evento import router as rota_evento
 from app.auth import auth_router, register_router, users_router
 load_dotenv()
 MONGO_URL = os.getenv("MONGO_URL", "")
@@ -50,6 +51,7 @@ app.include_router(users_router, prefix="/auth", tags=["auth"])
 app.include_router(rota_jogadores, prefix="/jogadores", tags=["jogadores"])
 app.include_router(rota_partida, prefix="/partida", tags=["partida"])
 app.include_router(rota_temporada, prefix="/temporada", tags=["temporada"])
+app.include_router(rota_evento, prefix="/evento", tags=["evento"])
 
 @app.get("/health")
 async def health():
