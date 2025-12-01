@@ -85,8 +85,9 @@ class Evento(Document):
     jogador: Link[Jogador]
     tipo: Link[Regra]
     criado_em: datetime = Field(default_factory=datetime.utcnow)
-    class Settings: name ='eventos'
-
+    class Settings: 
+        name ='eventos'
+        fetch_links = True 
 
 
 

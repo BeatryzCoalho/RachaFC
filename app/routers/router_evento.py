@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from beanie import PydanticObjectId
 from app.models import Evento, Partida, Jogador, Regra
 from app.auth import current_staff, current_user
-
+from bson import ObjectId
 router = APIRouter()
 
 class EventoIn(BaseModel):
@@ -22,11 +22,12 @@ class EventoOut(BaseModel):
 def serialize_evento(evento: Evento) -> EventoOut:
     return EventoOut(
         id=str(evento.id),
-        partida_id=str(evento.partida_id),
+        partida_id=str(evento.partida.id),
         jogador_id=str(evento.jogador.id),
         regra_id=str(evento.tipo.id),
-        criado_em=str(evento.criado_em),
+        criado_em=evento.criado_em.isoformat(),
     )
+
 
 @router.get("/", response_model=List[EventoOut])
 async def listar_eventos(user=Depends(current_staff)):
@@ -36,22 +37,24 @@ async def listar_eventos(user=Depends(current_staff)):
 
 @router.post("/", response_model=EventoOut)
 async def criar_evento(payload: EventoIn, user=Depends(current_staff)):
-    partida = await Partida.get(PydanticObjectId(payload.partida_id))
+  
+    partida = await Partida.get(ObjectId(payload.partida_id))
     if not partida:
         raise HTTPException(404, "Partida não encontrada")
 
-    jogador = await Jogador.get(PydanticObjectId(payload.jogador_id))
+    jogador = await Jogador.get(ObjectId(payload.jogador_id))
     if not jogador:
         raise HTTPException(404, "Jogador não encontrado")
 
-    regra = await Regra.get(PydanticObjectId(payload.regra_id))
+    regra = await Regra.get(ObjectId(payload.regra_id))
     if not regra:
         raise HTTPException(404, "Regra não encontrada")
 
+
     evento = Evento(partida=partida, jogador=jogador, tipo=regra)
     await evento.insert()
-    evento =  await get(evento.id, fetch_links=True)
 
+    evento = await Evento.get(evento.id, fetch_links=True)
     return serialize_evento(evento)
 
 @router.post("/partida/{partida_id}/campeao_semana")
