@@ -1,12 +1,13 @@
 fastapi==0.115.0
 uvicorn[standard]==0.30.0
-beanie==1.25.0        # < 2.0.0
-motor==3.4.0
+beanie==1.26.0
+motor==3.5.1
 pydantic==2.7.0
 pydantic-settings==2.2.1
 python-dotenv==1.0.1
-email-validator==2.2.0   # < 2.3
+email-validator==2.2.0
 pyjwt[crypto]==2.10.1
 pwdlib[argon2]==0.2.1
 fastapi-users==14.0.1
+fastapi-users-db-beanie==4.0.0
 git+https://github.com/fastapi-users/fastapi-users-db-beanie.git
